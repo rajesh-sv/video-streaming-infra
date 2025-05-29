@@ -1,0 +1,36 @@
+services:
+  auth-service-app:
+    build: ./backend/auth-service/
+    restart: on-failure:5
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
+      PG_URI: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@auth-service-postgredb:5432/${POSTGRES_DB}"
+    depends_on:
+      - auth-service-postgredb
+    deploy:
+      mode: replication
+      replicas: 3
+
+  auth-service-postgredb:
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - auth-service-pgdata:/var/lib/postgresql/data
+      - ./initdb/auth-service-db:/docker-entrypoint-initdb.d
+
+  api-gateway:
+    build: ./frontend/
+    ports:
+      - 8080:80
+    depends_on:
+      - auth-service-app
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+
+volumes:
+  auth-service-pgdata:
