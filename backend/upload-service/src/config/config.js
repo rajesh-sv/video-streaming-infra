@@ -1,11 +1,19 @@
-const { NODE_ENV, S3_BUCKET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } =
-  process.env;
+const {
+  NODE_ENV,
+  PG_URI,
+  JWT_PUBLIC_KEY,
+  S3_BUCKET,
+  AWS_ACCESS_KEY_ID,
+  AWS_SECRET_ACCESS_KEY,
+} = process.env;
 
 const PORT = process.env.PORT || 80;
 
-return {
+export {
   NODE_ENV,
-  BUCKET,
+  PG_URI,
+  JWT_PUBLIC_KEY,
+  S3_BUCKET,
   PORT,
   AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACCESS_KEY,
