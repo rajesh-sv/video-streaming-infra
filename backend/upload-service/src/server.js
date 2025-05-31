@@ -1,7 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
-import { uploadRouter } from "./routes/uploadRoutes";
+import { uploadRouter } from "./routes/uploadRoutes.js";
 import { PORT } from "./config/config.js";
 import { logger } from "./utils/pinoLogger.js";
 
