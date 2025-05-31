@@ -42,6 +42,7 @@ export async function signup(req, res) {
       status: 201,
       data: {
         message: "User created",
+        userId: user.user_id,
         username: user.username,
         email: user.email,
         createdAt: user.created_at,
@@ -98,6 +99,7 @@ export async function login(req, res) {
       status: 200,
       data: {
         message: "Logged in successfully",
+        userId: user.user_id,
         username: user.username,
         email: user.email,
         createdAt: user.created_at,
@@ -176,6 +178,7 @@ export async function verify(req, res) {
       status: 200,
       data: {
         message: "User authenticated",
+        userId: user.user_id,
         username: user.username,
         email: user.email,
         createdAt: user.created_at,
