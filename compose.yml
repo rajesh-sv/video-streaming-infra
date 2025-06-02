@@ -9,9 +9,6 @@ services:
       PG_URI: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgresdb:5432/${POSTGRES_DB}
     depends_on:
       - postgresdb
-    # deploy:
-    #   mode: replication
-    #   replicas: 3
 
   upload-service-app:
     build: ./backend/upload-service/
@@ -30,9 +27,19 @@ services:
     depends_on:
       - postgresdb
       - kafka
-    # deploy:
-    #   mode: replication
-    #   replicas: 3
+
+  search-service-app:
+    build: ./backend/search-service/
+    restart: on-failure:5
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
+      PG_URI: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgresdb:5432/${POSTGRES_DB}
+      ELASTICSEARCH_NODE: http://elasticsearch:${ELASTICSEARCH_CLIENT_PORT}
+      ELASTICSEARCH_INDEX: videos
+    depends_on:
+      - postgresdb
+      - elasticsearch
 
   video-resolution-processing-service:
     build: ./backend/video-processing-service/
@@ -44,13 +51,23 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       S3_BUCKET: ${S3_BUCKET}
       KAFKA_BROKER: kafka:${KAFKA_PORT}
-      KAFKA_VIDEO_RESOLUTION_TOPIC: ${KAFKA_VIDEO_RESOLUTION_TOPIC}
+      KAFKA_TOPIC: ${KAFKA_VIDEO_RESOLUTION_TOPIC}
     depends_on:
       - postgresdb
       - kafka
-    # deploy:
-    #   mode: replication
-    #   replicas: 3
+
+  video-search-index-processing-service:
+    build: ./backend/video-search-index-processing-service/
+    restart: on-failure:5
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      KAFKA_BROKER: kafka:${KAFKA_PORT}
+      KAFKA_TOPIC: ${KAFKA_VIDEO_SEARCH_INDEX_TOPIC}
+      ELASTICSEARCH_NODE: http://elasticsearch:${ELASTICSEARCH_CLIENT_PORT}
+      ELASTICSEARCH_INDEX: videos
+    depends_on:
+      - kafka
+      - elasticsearch
 
   api-gateway:
     build: ./frontend/
@@ -59,6 +76,7 @@ services:
     depends_on:
       - auth-service-app
       - upload-service-app
+      - search-service-app
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
 
@@ -87,5 +105,17 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.0.1
+    ports:
+      - "9200:${ELASTICSEARCH_CLIENT_PORT}"
+      - "9300:${ELASTICSEARCH_INTERNAL_PORT}"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+
 volumes:
   db-data:
+  es-data:
