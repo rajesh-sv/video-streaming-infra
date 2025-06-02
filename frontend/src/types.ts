@@ -10,6 +10,7 @@ export type SignupInputsType = {
 };
 
 export type VideoMetaDataType = {
+  file: File;
   title: string;
   description: string;
 };
