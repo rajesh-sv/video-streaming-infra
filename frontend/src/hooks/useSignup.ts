@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { useAuthContext } from "@/contexts/authContext";
+import { useNavigate } from "react-router";
 import { type SignupInputsType } from "@/types";
 
 export function useSignup() {
   const [loading, setLoading] = useState(false);
-  const { setUserAuthenticated } = useAuthContext();
+  const navigate = useNavigate();
 
   const signup = async ({ username, email, password }: SignupInputsType) => {
     try {
@@ -27,7 +27,7 @@ export function useSignup() {
       }
 
       toast.success(resObj.data.message);
-      setUserAuthenticated(true);
+      navigate("/login");
     } catch (error: any) {
       const errorObj = JSON.parse(error.message);
       if (errorObj.message) {
