@@ -15,3 +15,27 @@ app.use(authRouter);
 app.listen(PORT, () => {
   logger.info(`Server running on port: ${PORT}`);
 });
+
+const errorTypes = ['unhandledRejection', 'uncaughtException']
+const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
+
+errorTypes.forEach((type) => {
+  process.on(type, (e) => {
+    try {
+      logger.fatal(type);
+      logger.error(e);
+      process.exit(0);
+    } catch (_) {
+      logger.error("Error during exit, forcing exit...");
+      process.exit(1);
+    }
+  })
+});
+
+signalTraps.forEach((type) => {
+  process.once(type, () => {
+    logger.fatal(type)
+    logger.info("Killing the process");
+    process.kill(process.pid, type);
+  })
+});
