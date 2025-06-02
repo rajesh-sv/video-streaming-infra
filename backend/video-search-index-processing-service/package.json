@@ -1,0 +1,17 @@
+{
+  "name": "video-search-index-processing-service",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node kafkaConsumer.js"
+  },
+  "dependencies": {
+    "@elastic/elasticsearch": "^9.0.2",
+    "kafkajs": "^2.2.4",
+    "pino": "^9.7.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3"
+  }
+}
