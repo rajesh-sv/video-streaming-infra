@@ -6,12 +6,16 @@ import { Label } from "@/components/ui/label";
 import { Link } from "react-router";
 import { useState } from "react";
 import { type VideoMetaDataType } from "@/types";
+import { useUpload } from "@/hooks/useUpload";
+import { RoundSpinner } from "@/components/ui/spinner";
 
 export function Upload() {
   const [videoMetaData, setVideoMetaData] = useState<VideoMetaDataType>({
+    file: new File([], ""),
     title: "",
     description: "",
   });
+  const { loading, upload } = useUpload();
 
   return (
     <div className="flex items-center justify-center">
@@ -49,10 +53,31 @@ export function Upload() {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="file">Video File</Label>
-              <Input id="file" type="file" name="file" />
+              <Input
+                id="file"
+                type="file"
+                name="file"
+                accept="video/*"
+                onChange={(e) => {
+                  if (e.target.files !== null) {
+                    const file = e.target.files[0];
+                    if (file !== null) {
+                      setVideoMetaData({
+                        ...videoMetaData,
+                        file: file,
+                      });
+                    }
+                  }
+                }}
+              />
             </div>
-            <Button type="submit" className="w-full cursor-pointer">
-              Upload
+            <Button
+              type="submit"
+              className="w-full cursor-pointer"
+              disabled={loading}
+              onClick={() => upload(videoMetaData)}
+            >
+              {loading ? <RoundSpinner /> : "Upload"}
             </Button>
           </div>
           <div className="mt-4 text-center text-sm">
