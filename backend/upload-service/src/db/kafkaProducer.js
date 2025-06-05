@@ -3,7 +3,7 @@ import { KAFKA_BROKER } from "../config/config.js";
 
 const kafka = new Kafka({
   clientId: "video-upload-service",
-  brokers: [KAFKA_BROKER, "localhost:9092"],
+  brokers: [KAFKA_BROKER],
 });
 
 const producer = kafka.producer();
