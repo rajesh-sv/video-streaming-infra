@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import useLogout from "@/hooks/useLogout";
+import { useLogout } from "@/hooks/useLogout";
 import { RoundSpinner } from "@/components/ui/spinner";
 
 export function Logout() {
