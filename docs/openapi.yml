@@ -1,0 +1,187 @@
+openapi: 3.1.0
+info:
+  title: Video Streaming Infrastructure API
+  description: API for managing authentication, video uploads, and search functionality
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+    description: Local development server
+paths:
+  /api/auth/signup:
+    post:
+      summary: User Signup
+      description: Create a new user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: johndoe
+                email:
+                  type: string
+                  format: email
+                  example: johndoe@example.com
+                password:
+                  type: string
+                  format: password
+                  example: password123
+      responses:
+        "201":
+          description: User created
+        "400":
+          description: Username already exists
+        "500":
+          description: internal Server Error
+
+  /api/auth/login:
+    post:
+      summary: User Login
+      description: Authenticate a user and return a session token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: johndoe
+                password:
+                  type: string
+                  format: password
+                  example: password123
+      responses:
+        "200":
+          description: Logged in successfully
+        "400":
+          description: Invalid credentials
+        "401":
+          description: Invalid username or password
+        "500":
+          description: Internal Server Error
+
+  /api/auth/logout:
+    post:
+      summary: User Logout
+      description: Log out the authenticated user
+      responses:
+        "200":
+          description: Logged out successfully
+
+  /api/auth/verify:
+    post:
+      summary: Verify Authentication
+      description: Verify if the user is authenticated
+      responses:
+        "200":
+          description: User authenticated
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+
+  /api/upload/s3UploadUrl:
+    post:
+      summary: Generate S3 Presigned URL
+      description: Generate a presigned URL for uploading a video to S3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: string
+                  example: video.mp4
+                title:
+                  type: string
+                  example: My Video
+                description:
+                  type: string
+                  example: A description of the video
+      responses:
+        "200":
+          description: Presigned S3 upload url created
+        "400":
+          description: Validation error
+        "500":
+          description: Internal Server Error
+
+  /api/upload/video:
+    post:
+      summary: Finalize Video Upload
+      description: Save video metadata and notify downstream services.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: string
+                  example: video.mp4
+                title:
+                  type: string
+                  example: My Video
+                description:
+                  type: string
+                  example: A description of the video.
+                awsKey:
+                  type: string
+                  example: unique-video-key
+      responses:
+        "200":
+          description: Video uploaded successfully
+        "400":
+          description: Validation error
+        "500":
+          description: Internal Server Error
+
+  /api/search:
+    get:
+      summary: Search Videos
+      description: Search for videos by a query string
+      parameters:
+        - name: s
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The search query string
+      responses:
+        "200":
+          description: Found videos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Found videos
+                  videos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                          example: My Video
+                        description:
+                          type: string
+                          example: A description of the video
+                        awsUrl:
+                          type: string
+                          example: https://s3.amazonaws.com/video.mp4
+        "400":
+          description: Validation error
+        "500":
+          description: Internal Server Error
+

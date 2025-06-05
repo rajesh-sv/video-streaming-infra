@@ -10,6 +10,7 @@ The platform is built upon a **microservices architecture**, with distinct servi
 
 ### Directory Structure
 
+- `docs/openapi.yml`: OpenAPI spec for auth-service, upload-service, and search-service
 - `backend/`
   - `auth-service/`: Handles user authentication and authorization.
   - `search-service/`: Provides video search functionality.
