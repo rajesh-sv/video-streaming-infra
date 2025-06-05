@@ -6,12 +6,14 @@ const esClient = new Client({ node: ELASTICSEARCH_NODE });
 export async function search(searchString) {
   const result = await esClient.search({
     index: ELASTICSEARCH_INDEX,
-    query: {
-      multi_match: {
-        query: searchString,
-        fields: ["filename", "title", "description"],
-        type: "best_fields",
-        fuzziness: "AUTO",
+    body: {
+      query: {
+        multi_match: {
+          query: searchString,
+          fields: ["filename", "title", "description"],
+          type: "best_fields",
+          fuzziness: "AUTO",
+        },
       },
       _source: ["videoId"],
     },
