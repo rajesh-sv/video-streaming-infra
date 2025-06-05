@@ -18,6 +18,7 @@ export async function ensureIndexExists() {
       body: {
         mappings: {
           properties: {
+            videoId: { type: "integer" },
             filename: { type: "text", analyzer: "english" },
             title: { type: "text", analyzer: "english" },
             description: { type: "text", analyzer: "english" },
@@ -32,6 +33,7 @@ export async function ensureIndexExists() {
 
 export async function indexVideoDocument(videoData) {
   const indexData = {
+    videoId: videoData.videoId,
     filename: videoData.filename,
     title: videoData.title,
     description: videoData.description,
