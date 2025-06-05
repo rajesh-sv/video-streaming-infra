@@ -3,7 +3,8 @@ import { logger } from "../utils/pinoLogger.js";
 
 export async function search(req, res) {
   try {
-    const { searchString } = req.body;
+    const { s } = req.query;
+    const searchString = s;
 
     if (searchString.length === 0) {
       return res.status(400).json({
@@ -17,8 +18,13 @@ export async function search(req, res) {
     const videoIds = await Video.getVideoIdsBySearchString(searchString);
     const videos = [];
     for (const videoId of videoIds) {
-      const video = await Video.getVideoByVideoId(videoId);
-      videos.push(video);
+      const result = await Video.getVideoByVideoId(videoId);
+      const video = result.rows[0];
+      videos.push({
+        title: video.title,
+        description: video.description,
+        awsUrl: video.aws_url,
+      });
     }
 
     return res.status(200).json({
