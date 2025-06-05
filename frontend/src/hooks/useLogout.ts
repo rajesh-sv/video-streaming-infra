@@ -2,7 +2,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { useAuthContext } from "@/contexts/authContext";
 
-export default function useLogout() {
+export function useLogout() {
   const [loading, setLoading] = useState(false);
   const { setUserAuthenticated } = useAuthContext();
 
@@ -10,7 +10,7 @@ export default function useLogout() {
     try {
       setLoading(true);
 
-      const res = await fetch("api/auth/logout", {
+      const res = await fetch("/api/auth/logout", {
         method: "POST",
       });
 
@@ -20,11 +20,11 @@ export default function useLogout() {
         throw new Error(JSON.stringify(resObj.error));
       }
 
-      toast.success(resObj.message);
+      toast.success(resObj.data.message);
       setUserAuthenticated(false);
     } catch (error: any) {
       const errorObj = JSON.parse(error.message);
-      toast.error(errorObj);
+      toast.error(errorObj.message);
     } finally {
       setLoading(false);
     }
