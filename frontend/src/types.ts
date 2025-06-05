@@ -19,3 +19,9 @@ export type AuthContextType = {
   userAuthenticated: boolean;
   setUserAuthenticated: (userAuthenticated: boolean) => void;
 };
+
+export type SearchResultVideoType = {
+  title: string;
+  description: string;
+  awsUrl: string;
+};
