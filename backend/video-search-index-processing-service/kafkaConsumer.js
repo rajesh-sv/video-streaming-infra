@@ -11,7 +11,7 @@ const KAFKA_CLIENT_ID = "video-search-index-processing-client";
 
 const kafka = new Kafka({
   clientId: KAFKA_CLIENT_ID,
-  brokers: [KAFKA_BROKER, "localhost:9092"],
+  brokers: [KAFKA_BROKER],
 });
 
 const consumer = kafka.consumer({ groupId: KAFKA_GROUP_ID });
@@ -20,7 +20,7 @@ async function consumeMessages() {
   await ensureTopicExists();
   await ensureIndexExists();
   await consumer.connect();
-  await consumer.subscribe({ topics: [KAFKA_TOPIC] });
+  await consumer.subscribe({ topic: KAFKA_TOPIC });
   logger.info(`Subscribed to topic: ${KAFKA_TOPIC}`);
 
   await consumer.run({
