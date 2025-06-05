@@ -4,6 +4,6 @@ import { search } from "../controllers/searchController.js";
 
 const searchRouter = Router();
 
-searchRouter.post("/search", authenticateUser, search);
+searchRouter.get("/search", authenticateUser, search);
 
 export { searchRouter };
